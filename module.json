@@ -2,9 +2,14 @@
   "name": "foundry-landing",
   "title": "Foundry Landing Page",
   "description": "A customizable landing page module for Foundry VTT with NPC history and player information",
-  "version": "0.0.1",
-  "minimumCoreVersion": "0.8.9",
-  "compatibleCoreVersion": "10",
+  "version": "0.0.2",
+  "minimumCoreVersion": "12.0.0",
+  "compatibleCoreVersion": "12.0.0",
+  "compatibility": {
+    "minimum": "12.0.0",
+    "verified": "12.0.0",
+    "maximum": "12"
+  },
   "author": "Your Name",
   "esmodules": ["module/main.js"],
   "styles": ["styles/landing.css"],
@@ -20,7 +25,11 @@
       "path": "lang/en.json"
     }
   ],
-  "url": "https://github.com/camrun91/foundry-landing",
-  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json",
-  "download": "https://github.com/camrun91/foundry-landing/archive/main.zip"
+  "url": "https://github.com/yourusername/foundry-landing",
+  "manifest": "https://raw.githubusercontent.com/yourusername/foundry-landing/main/module.json",
+  "download": "https://github.com/yourusername/foundry-landing/archive/main.zip",
+  "readme": "https://raw.githubusercontent.com/yourusername/foundry-landing/main/README.md",
+  "changelog": "https://raw.githubusercontent.com/yourusername/foundry-landing/main/CHANGELOG.md",
+  "bugs": "https://github.com/yourusername/foundry-landing/issues",
+  "allowBugReporter": true
 }
