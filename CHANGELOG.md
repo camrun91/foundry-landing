@@ -24,3 +24,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix typos
 # 0.0.4
 - fix missing refs
+# 0.0.5
+- pf2e support
