@@ -12,4 +12,26 @@ Hooks.once("ready", async function () {
   // Create the landing page application
   const landingPage = new LandingPageApplication();
   landingPage.render(true);
+
+  // Add button to the sidebar
+  game.settings.register("foundry-landing", "showSidebarButton", {
+    name: "Show Sidebar Button",
+    hint: "Show a button in the sidebar to access the landing page",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
+  if (game.settings.get("foundry-landing", "showSidebarButton")) {
+    // Add button to the sidebar
+    game.settings.registerMenu("foundry-landing", "landingPageMenu", {
+      name: "Landing Page Settings",
+      label: "Landing Page",
+      hint: "Configure the landing page settings",
+      icon: "fas fa-home",
+      type: LandingPageApplication,
+      restricted: true,
+    });
+  }
 });
