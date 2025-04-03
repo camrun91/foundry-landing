@@ -1,3 +1,43 @@
-<div class="landing-page">
-    <div id="landing-page-container"></div>
+<div class="landing-page-container" {{#if backgroundImage}}style="background-image: url('{{backgroundImage}}');"{{/if}}>
+    {{#if showNpcHistory}}
+    <div class="npc-section">
+        <h2>NPC History</h2>
+        <div class="npc-grid">
+            {{#each npcs}}
+            <div class="npc-card" data-npc-id="{{this.id}}">
+                <div class="npc-image">
+                    <img src="{{this.img}}" alt="{{this.name}}">
+                </div>
+                <div class="npc-info">
+                    <h3>{{this.name}}</h3>
+                    <p class="npc-description">{{this.description}}</p>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if showPlayerInfo}}
+    <div class="player-section">
+        <h2>Player Information</h2>
+        <div class="player-grid">
+            {{#each players}}
+            <div class="player-card" data-player-id="{{this.id}}">
+                <div class="player-image">
+                    <img src="{{this.img}}" alt="{{this.name}}">
+                </div>
+                <div class="player-info">
+                    <h3>{{this.name}}</h3>
+                    <div class="player-stats">
+                        <p>Class: {{this.class}}</p>
+                        <p>Level: {{this.level}}</p>
+                    </div>
+                    <p class="player-description">{{this.description}}</p>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
 </div> 
