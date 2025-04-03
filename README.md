@@ -34,7 +34,7 @@ This module is licensed under the MIT License.
 
 ## Support
 
-For bugs, feature requests or support, please create an issue on the [GitHub repository](https://github.com/yourusername/foundry-landing/issues).
+For bugs, feature requests or support, please create an issue on the [GitHub repository](https://github.com/camrun91/foundry-landing/issues).
 
 ## Changelog
 
