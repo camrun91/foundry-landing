@@ -1,17 +1,18 @@
 export function registerSettings() {
+  // Register all module settings
   game.settings.register("foundry-landing", "backgroundImage", {
-    name: "Background Image",
-    hint: "URL or path to the background image",
+    name: game.i18n.localize("FOUNDRY_LANDING.Settings.BackgroundImage.Name"),
+    hint: game.i18n.localize("FOUNDRY_LANDING.Settings.BackgroundImage.Hint"),
     scope: "world",
     config: true,
     type: String,
     default: "",
-    filePicker: true,
+    filePicker: "image",
   });
 
   game.settings.register("foundry-landing", "showNpcHistory", {
-    name: "Show NPC History",
-    hint: "Enable/disable the NPC history section",
+    name: game.i18n.localize("FOUNDRY_LANDING.Settings.ShowNpcHistory.Name"),
+    hint: game.i18n.localize("FOUNDRY_LANDING.Settings.ShowNpcHistory.Hint"),
     scope: "world",
     config: true,
     type: Boolean,
@@ -19,8 +20,8 @@ export function registerSettings() {
   });
 
   game.settings.register("foundry-landing", "showPlayerInfo", {
-    name: "Show Player Information",
-    hint: "Enable/disable the player information section",
+    name: game.i18n.localize("FOUNDRY_LANDING.Settings.ShowPlayerInfo.Name"),
+    hint: game.i18n.localize("FOUNDRY_LANDING.Settings.ShowPlayerInfo.Hint"),
     scope: "world",
     config: true,
     type: Boolean,

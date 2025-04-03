@@ -13,11 +13,15 @@
   "author": "Cameron Llewellyn",
   "esmodules": ["module/main.js"],
   "styles": ["styles/landing.css"],
-  "dependencies": [
-    {
-      "name": "lib-wrapper"
-    }
-  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json"
+      }
+    ]
+  },
   "languages": [
     {
       "lang": "en",

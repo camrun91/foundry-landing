@@ -1,37 +1,46 @@
 import { registerSettings } from "./settings.js";
 import { LandingPageApplication } from "./apps/landing-page.js";
 
+let landingPage;
+
 Hooks.once("init", async function () {
   console.log("Foundry Landing Page | Initializing");
   registerSettings();
 });
 
+Hooks.on("getSceneControlButtons", (controls) => {
+  controls.push({
+    name: "landing-page",
+    title: "Landing Page Controls",
+    icon: "fas fa-home",
+    layer: "controls",
+    tools: [
+      {
+        name: "toggle",
+        title: "Toggle Landing Page",
+        icon: "fas fa-scroll",
+        button: true,
+        onClick: () => {
+          if (!landingPage) {
+            landingPage = new LandingPageApplication();
+          }
+          landingPage.render(true);
+        },
+      },
+    ],
+  });
+});
+
 Hooks.once("ready", async function () {
   console.log("Foundry Landing Page | Ready");
 
-  // Create the landing page application
-  const landingPage = new LandingPageApplication();
-  landingPage.render(true);
-
-  // Add button to the sidebar
-  game.settings.register("foundry-landing", "showSidebarButton", {
-    name: "Show Sidebar Button",
-    hint: "Show a button in the sidebar to access the landing page",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
+  // Register the landing page menu in game settings
+  game.settings.registerMenu("foundry-landing", "landingPageConfig", {
+    name: "Landing Page Configuration",
+    label: "Configure Landing Page",
+    hint: "Configure the landing page settings including background image and display options.",
+    icon: "fas fa-cog",
+    type: LandingPageApplication,
+    restricted: true,
   });
-
-  if (game.settings.get("foundry-landing", "showSidebarButton")) {
-    // Add button to the sidebar
-    game.settings.registerMenu("foundry-landing", "landingPageMenu", {
-      name: "Landing Page Settings",
-      label: "Landing Page",
-      hint: "Configure the landing page settings",
-      icon: "fas fa-home",
-      type: LandingPageApplication,
-      restricted: true,
-    });
-  }
 });
