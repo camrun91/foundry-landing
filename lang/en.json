@@ -1,0 +1,35 @@
+{
+  "FOUNDRY_LANDING": {
+    "Title": "Landing Page",
+    "Settings": {
+      "BackgroundImage": {
+        "Name": "Background Image",
+        "Hint": "URL or path to the background image"
+      },
+      "ShowNpcHistory": {
+        "Name": "Show NPC History",
+        "Hint": "Enable/disable the NPC history section"
+      },
+      "ShowPlayerInfo": {
+        "Name": "Show Player Information",
+        "Hint": "Enable/disable the player information section"
+      }
+    },
+    "Sections": {
+      "NpcHistory": "NPC History",
+      "PlayerInfo": "Player Information"
+    },
+    "Player": {
+      "Class": "Class",
+      "Level": "Level",
+      "Race": "Race",
+      "Description": "Description",
+      "Unknown": "Unknown"
+    },
+    "Npc": {
+      "LastInteraction": "Last Interaction",
+      "Description": "Description",
+      "Unknown": "Unknown"
+    }
+  }
+}
