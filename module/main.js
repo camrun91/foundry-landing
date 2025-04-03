@@ -31,16 +31,19 @@ Hooks.on("getSceneControlButtons", (controls) => {
   });
 });
 
-Hooks.once("ready", async function () {
+Hooks.once("information", async function () {
   console.log("Foundry Landing Page | Ready");
 
-  // Register the landing page menu in game settings
-  game.settings.registerMenu("foundry-landing", "landingPageConfig", {
-    name: "Landing Page Configuration",
-    label: "Configure Landing Page",
-    hint: "Configure the landing page settings including background image and display options.",
+  // Create menu item in module settings
+  game.settings.registerMenu("foundry-landing", "landingPageMenu", {
+    name: "Landing Page Settings",
+    label: "Open Landing Page Settings",
+    hint: "Configure landing page background and display options",
     icon: "fas fa-cog",
     type: LandingPageApplication,
     restricted: true,
   });
+
+  // Create initial landing page instance
+  landingPage = new LandingPageApplication();
 });
