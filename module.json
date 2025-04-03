@@ -1,0 +1,26 @@
+{
+  "name": "foundry-landing",
+  "title": "Foundry Landing Page",
+  "description": "A customizable landing page module for Foundry VTT with NPC history and player information",
+  "version": "0.0.1",
+  "minimumCoreVersion": "0.8.9",
+  "compatibleCoreVersion": "10",
+  "author": "Your Name",
+  "esmodules": ["module/main.js"],
+  "styles": ["styles/landing.css"],
+  "dependencies": [
+    {
+      "name": "lib-wrapper"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "url": "https://github.com/yourusername/foundry-landing",
+  "manifest": "https://raw.githubusercontent.com/yourusername/foundry-landing/main/module.json",
+  "download": "https://github.com/yourusername/foundry-landing/archive/main.zip"
+}

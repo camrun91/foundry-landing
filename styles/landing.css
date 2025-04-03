@@ -1,0 +1,70 @@
+.landing-page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.landing-page-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.npc-history-grid,
+.player-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.npc-card,
+.player-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: transform 0.2s;
+}
+
+.npc-card:hover,
+.player-card:hover {
+    transform: translateY(-5px);
+}
+
+.npc-image img,
+.player-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.npc-info h3,
+.player-info h3 {
+    margin: 0.5rem 0;
+    color: #fff;
+}
+
+.npc-metadata,
+.player-stats {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.player-description {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .landing-page-content {
+        grid-template-columns: 1fr;
+    }
+} 
