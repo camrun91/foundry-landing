@@ -32,6 +32,7 @@ export class LandingPageApplication extends FormApplication {
       name: npc.name,
       img: npc.img,
       isVisible: npc.getFlag("foundry-landing", "visible") ?? true,
+      position: npc.getFlag("foundry-landing", "position") ?? { x: 0, y: 0 },
     }));
   }
 
@@ -42,22 +43,78 @@ export class LandingPageApplication extends FormApplication {
         id: player.id,
         name: player.name,
         img: player.img,
+        position: player.getFlag("foundry-landing", "position") ?? {
+          x: 0,
+          y: 0,
+        },
       }));
   }
 
   activateListeners(html) {
     super.activateListeners(html);
 
+    const cards = html.find(".npc-card, .player-card");
+
+    // Make cards draggable for GMs
+    if (game.user.isGM) {
+      cards.each((i, card) => {
+        const $card = $(card);
+        const actorId = $card.data("actorId");
+        const actor = game.actors.get(actorId);
+        const position = actor.getFlag("foundry-landing", "position") ?? {
+          x: 0,
+          y: 0,
+        };
+
+        // Set initial position
+        $card.css({
+          position: "absolute",
+          left: position.x + "%",
+          top: position.y + "%",
+        });
+
+        // Make draggable
+        $card.draggable({
+          containment: "parent",
+          stop: async (event, ui) => {
+            const container = ui.helper.parent();
+            const x = (ui.position.left / container.width()) * 100;
+            const y = (ui.position.top / container.height()) * 100;
+            await actor.setFlag("foundry-landing", "position", { x, y });
+          },
+        });
+      });
+    } else {
+      // For non-GMs, just position the cards
+      cards.each((i, card) => {
+        const $card = $(card);
+        const actorId = $card.data("actorId");
+        const actor = game.actors.get(actorId);
+        const position = actor.getFlag("foundry-landing", "position") ?? {
+          x: 0,
+          y: 0,
+        };
+
+        $card.css({
+          position: "absolute",
+          left: position.x + "%",
+          top: position.y + "%",
+        });
+      });
+    }
+
     // Add click handlers for NPCs
     html.find(".npc-card").click((ev) => {
-      const npcId = ev.currentTarget.dataset.npcId;
+      if ($(ev.target).hasClass("drag-handle")) return;
+      const npcId = ev.currentTarget.dataset.actorId;
       const npc = game.actors.get(npcId);
       if (npc) npc.sheet.render(true);
     });
 
     // Add click handlers for Players
     html.find(".player-card").click((ev) => {
-      const playerId = ev.currentTarget.dataset.playerId;
+      if ($(ev.target).hasClass("drag-handle")) return;
+      const playerId = ev.currentTarget.dataset.actorId;
       const player = game.actors.get(playerId);
       if (player) player.sheet.render(true);
     });

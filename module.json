@@ -2,7 +2,7 @@
   "name": "foundry-landing",
   "title": "Foundry Landing Page",
   "description": "A customizable landing page module for Foundry VTT with NPC history and player information",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "minimumCoreVersion": "12.0.0",
   "compatibleCoreVersion": "12.0.0",
   "compatibility": {
