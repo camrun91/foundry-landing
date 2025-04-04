@@ -55,51 +55,30 @@ export class LandingPageApplication extends FormApplication {
 
     const cards = html.find(".npc-card, .player-card");
 
-    // Make cards draggable for GMs
-    if (game.user.isGM) {
-      cards.each((i, card) => {
-        const $card = $(card);
-        const actorId = $card.data("actorId");
-        const actor = game.actors.get(actorId);
-        const position = actor.getFlag("foundry-landing", "position") ?? {
-          x: 0,
-          y: 0,
-        };
+    // Position all cards
+    cards.each((i, card) => {
+      const $card = $(card);
+      const actorId = $card.data("actorId");
+      const actor = game.actors.get(actorId);
+      const position = actor.getFlag("foundry-landing", "position") ?? {
+        x: 0,
+        y: 0,
+      };
 
-        // Set initial position
-        $card.css({
-          position: "absolute",
-          left: position.x + "%",
-          top: position.y + "%",
-        });
-
-        // Make draggable
-        $card.draggable({
-          containment: "parent",
-          stop: async (event, ui) => {
-            const container = ui.helper.parent();
-            const x = (ui.position.left / container.width()) * 100;
-            const y = (ui.position.top / container.height()) * 100;
-            await actor.setFlag("foundry-landing", "position", { x, y });
-          },
-        });
+      $card.css({
+        position: "absolute",
+        left: position.x + "%",
+        top: position.y + "%",
       });
-    } else {
-      // For non-GMs, just position the cards
-      cards.each((i, card) => {
-        const $card = $(card);
-        const actorId = $card.data("actorId");
-        const actor = game.actors.get(actorId);
-        const position = actor.getFlag("foundry-landing", "position") ?? {
-          x: 0,
-          y: 0,
-        };
+    });
 
-        $card.css({
-          position: "absolute",
-          left: position.x + "%",
-          top: position.y + "%",
-        });
+    if (game.user.isGM) {
+      // Set up drag handling for GMs
+      cards.each((i, card) => {
+        card.setAttribute("draggable", true);
+        card.addEventListener("dragstart", this._onDragStart.bind(this));
+        card.addEventListener("drag", this._onDrag.bind(this));
+        card.addEventListener("dragend", this._onDragEnd.bind(this));
       });
     }
 
@@ -118,6 +97,60 @@ export class LandingPageApplication extends FormApplication {
       const player = game.actors.get(playerId);
       if (player) player.sheet.render(true);
     });
+  }
+
+  _onDragStart(event) {
+    const card = event.currentTarget;
+    card.classList.add("dragging");
+
+    // Store the initial mouse position relative to the card
+    const rect = card.getBoundingClientRect();
+    card.dataset.offsetX = event.clientX - rect.left;
+    card.dataset.offsetY = event.clientY - rect.top;
+  }
+
+  _onDrag(event) {
+    if (!event.clientX || !event.clientY) return; // Ignore invalid drag events
+
+    const card = event.currentTarget;
+    const container = card.parentElement;
+    const containerRect = container.getBoundingClientRect();
+
+    // Calculate new position considering the initial offset
+    const offsetX = Number(card.dataset.offsetX);
+    const offsetY = Number(card.dataset.offsetY);
+
+    let left = event.clientX - containerRect.left - offsetX;
+    let top = event.clientY - containerRect.top - offsetY;
+
+    // Constrain to container bounds
+    left = Math.max(0, Math.min(left, containerRect.width - card.offsetWidth));
+    top = Math.max(0, Math.min(top, containerRect.height - card.offsetHeight));
+
+    // Convert to percentages
+    const xPercent = (left / containerRect.width) * 100;
+    const yPercent = (top / containerRect.height) * 100;
+
+    card.style.left = xPercent + "%";
+    card.style.top = yPercent + "%";
+  }
+
+  async _onDragEnd(event) {
+    const card = event.currentTarget;
+    card.classList.remove("dragging");
+
+    // Save the final position
+    const container = card.parentElement;
+    const containerRect = container.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+
+    const x =
+      ((cardRect.left - containerRect.left) / containerRect.width) * 100;
+    const y = ((cardRect.top - containerRect.top) / containerRect.height) * 100;
+
+    const actorId = card.dataset.actorId;
+    const actor = game.actors.get(actorId);
+    await actor.setFlag("foundry-landing", "position", { x, y });
   }
 
   async close(options = {}) {

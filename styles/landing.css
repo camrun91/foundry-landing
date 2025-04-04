@@ -56,11 +56,19 @@
   position: absolute;
   width: 150px;
   z-index: 1;
+  user-select: none;
 }
 
 .npc-card:hover, .player-card:hover {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   z-index: 2;
+}
+
+.npc-card.dragging, .player-card.dragging {
+  opacity: 0.8;
+  z-index: 1000;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  pointer-events: none;
 }
 
 .npc-card img, .player-card img {
