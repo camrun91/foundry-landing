@@ -1,5 +1,6 @@
 export class LandingPageApplication extends Application {
   static get defaultOptions() {
+    console.log("LandingPageApplication | Initializing defaultOptions");
     return mergeObject(super.defaultOptions, {
       id: "landing-page",
       title: "Landing Page",
@@ -13,17 +14,21 @@ export class LandingPageApplication extends Application {
   }
 
   getData() {
-    return {
+    console.log("LandingPageApplication | Getting Data");
+    const data = {
       backgroundImage: game.settings.get("foundry-landing", "backgroundImage"),
       showNpcHistory: game.settings.get("foundry-landing", "showNpcHistory"),
       showPlayerInfo: game.settings.get("foundry-landing", "showPlayerInfo"),
       npcs: this._getNpcs(),
       players: this._getPlayers(),
     };
+    console.log("LandingPageApplication | Data:", data);
+    return data;
   }
 
   _getNpcs() {
-    return game.actors
+    console.log("LandingPageApplication | Getting NPCs");
+    const npcs = game.actors
       .filter((actor) => actor.type === "npc")
       .map((npc) => {
         return {
@@ -34,10 +39,13 @@ export class LandingPageApplication extends Application {
             npc.system.details?.biography?.value || "No description available",
         };
       });
+    console.log("LandingPageApplication | NPCs found:", npcs.length);
+    return npcs;
   }
 
   _getPlayers() {
-    return game.actors
+    console.log("LandingPageApplication | Getting Players");
+    const players = game.actors
       .filter((actor) => actor.type === "character")
       .map((player) => {
         return {
@@ -51,10 +59,13 @@ export class LandingPageApplication extends Application {
             "No description available",
         };
       });
+    console.log("LandingPageApplication | Players found:", players.length);
+    return players;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
+    console.log("LandingPageApplication | Activating Listeners");
 
     // Add click handlers for NPCs
     html.find(".npc-card").click((ev) => {
@@ -69,5 +80,10 @@ export class LandingPageApplication extends Application {
       const player = game.actors.get(playerId);
       if (player) player.sheet.render(true);
     });
+  }
+
+  render(force = false, options = {}) {
+    console.log("LandingPageApplication | Rendering");
+    return super.render(force, options);
   }
 }
