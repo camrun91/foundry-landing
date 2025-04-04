@@ -10,6 +10,7 @@ export class LandingPageApplication extends FormApplication {
       resizable: true,
       closeOnSubmit: false,
       submitOnChange: true,
+      popOut: true,
       tabs: [
         {
           navSelector: ".tabs",
@@ -29,6 +30,7 @@ export class LandingPageApplication extends FormApplication {
       npcs: this._getNpcs(),
       players: this._getPlayers(),
       isGM: game.user.isGM,
+      isPaused: game.paused,
     };
     console.log("LandingPageApplication | Data:", data);
     return data;
@@ -116,5 +118,15 @@ export class LandingPageApplication extends FormApplication {
   render(force = false, options = {}) {
     console.log("LandingPageApplication | Rendering");
     return super.render(force, options);
+  }
+
+  setPosition(options = {}) {
+    if (game.paused) {
+      options.width = "100%";
+      options.height = "100%";
+      options.top = 0;
+      options.left = 0;
+    }
+    return super.setPosition(options);
   }
 }

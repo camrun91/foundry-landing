@@ -5,17 +5,13 @@ let landingPage;
 
 console.log("Hello World! This code runs immediately when the file is loaded.");
 
-Hooks.on("init", function () {
-  console.log(
-    "Hello World! This code runs once the Foundry VTT software begins its initialization workflow."
-  );
+Hooks.on("init", () => {
+  console.log("Foundry Landing Page | Initializing module");
   registerSettings();
 });
 
-Hooks.on("ready", function () {
-  console.log(
-    "Hello World! This code runs once core initialization is ready and game data is available."
-  );
+Hooks.on("ready", () => {
+  console.log("Foundry Landing Page | Module Ready");
 
   // Register the landing page configuration menu
   game.settings.registerMenu("foundry-landing", "landingPageConfig", {
@@ -28,9 +24,29 @@ Hooks.on("ready", function () {
   });
 
   // Create initial landing page instance
-  console.log("Foundry Landing Page | Creating initial landing page instance");
   landingPage = new LandingPageApplication();
-  landingPage.render(true);
+
+  // Show landing page if game is paused
+  if (game.paused) {
+    landingPage.render(true);
+  }
+});
+
+// Watch for pause/unpause
+Hooks.on("pauseGame", (isPaused) => {
+  if (!landingPage) {
+    landingPage = new LandingPageApplication();
+  }
+
+  if (isPaused) {
+    // Game was paused, show landing page
+    landingPage.render(true);
+    // Add fullscreen overlay class to landing page
+    landingPage.element.addClass("fullscreen-overlay");
+  } else {
+    // Game was unpaused, hide landing page
+    landingPage.close();
+  }
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {
