@@ -168,8 +168,140 @@ export class LandingPageApplication extends FormApplication {
       throw new Error(`Unknown style: ${style}`);
     }
 
-    const endpoint = game.settings.get("foundry-landing", "localLlmEndpoint");
-    const model = game.settings.get("foundry-landing", "localLlmModel");
+    const provider = game.settings.get("foundry-landing", "llmProvider");
+    let recap;
+
+    try {
+      switch (provider) {
+        case "openai":
+          recap = await this._generateWithOpenAI(prompt, content);
+          break;
+        case "huggingface":
+          recap = await this._generateWithHuggingFace(prompt, content);
+          break;
+        case "ollama":
+          recap = await this._generateWithOllama(prompt, content);
+          break;
+        default:
+          throw new Error(`Unknown provider: ${provider}`);
+      }
+
+      // Format the recap with some basic HTML
+      return recap
+        .split("\n")
+        .map((para) => (para.trim() ? `<p>${para}</p>` : ""))
+        .join("");
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      throw error;
+    }
+  }
+
+  async _generateWithOpenAI(prompt, content) {
+    const apiKey = game.settings.get("foundry-landing", "openaiApiKey");
+    if (!apiKey) {
+      ui.notifications.error(
+        "Please configure your OpenAI API key in the module settings."
+      );
+      throw new Error("OpenAI API key not configured");
+    }
+
+    const model = game.settings.get("foundry-landing", "openaiModel");
+
+    try {
+      const response = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.",
+              },
+              {
+                role: "user",
+                content: `${prompt}\n\nSession Notes:\n${content}`,
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 1000,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          `OpenAI API error: ${error.error?.message || "Unknown error"}`
+        );
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content.trim();
+    } catch (error) {
+      console.error("OpenAI Error:", error);
+      throw new Error(`Failed to generate recap with OpenAI: ${error.message}`);
+    }
+  }
+
+  async _generateWithHuggingFace(prompt, content) {
+    const apiKey = game.settings.get("foundry-landing", "hfApiKey");
+    if (!apiKey) {
+      ui.notifications.error(
+        "Please configure your Hugging Face API key in the module settings."
+      );
+      throw new Error("Hugging Face API key not configured");
+    }
+
+    const model = game.settings.get("foundry-landing", "hfModel");
+
+    try {
+      const response = await fetch(
+        `https://api-inference.huggingface.co/models/${model}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            inputs: `You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.
+
+${prompt}
+
+Session Notes:
+${content}
+
+Remember to maintain the specified style throughout the recap and make it engaging for the players.`,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Hugging Face API error: ${error}`);
+      }
+
+      const data = await response.json();
+      return Array.isArray(data) ? data[0].generated_text : data.generated_text;
+    } catch (error) {
+      console.error("Hugging Face Error:", error);
+      throw new Error(
+        `Failed to generate recap with Hugging Face: ${error.message}`
+      );
+    }
+  }
+
+  async _generateWithOllama(prompt, content) {
+    const endpoint = game.settings.get("foundry-landing", "ollamaEndpoint");
+    const model = game.settings.get("foundry-landing", "ollamaModel");
 
     try {
       // First, check if Ollama is running
@@ -185,7 +317,6 @@ export class LandingPageApplication extends FormApplication {
         throw new Error("Ollama connection failed: " + error.message);
       }
 
-      // Generate the recap
       const response = await fetch(`${endpoint}/api/generate`, {
         method: "POST",
         headers: {
@@ -219,16 +350,10 @@ Remember to maintain the specified style throughout the recap and make it engagi
       }
 
       const data = await response.json();
-      const recap = data.response.trim();
-
-      // Format the recap with some basic HTML
-      return recap
-        .split("\n")
-        .map((para) => (para.trim() ? `<p>${para}</p>` : ""))
-        .join("");
+      return data.response.trim();
     } catch (error) {
       console.error("Ollama Error:", error);
-      throw new Error(`Failed to generate recap: ${error.message}`);
+      throw new Error(`Failed to generate recap with Ollama: ${error.message}`);
     }
   }
 
