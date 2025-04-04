@@ -13,7 +13,6 @@
   "author": "Cameron Llewellyn",
   "esmodules": ["module/main.js"],
   "styles": ["styles/landing.css"],
-  "scripts": [],
   "relationships": {
     "requires": [
       {
