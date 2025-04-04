@@ -1,7 +1,7 @@
 export class LandingPageApplication extends FormApplication {
   static get defaultOptions() {
     console.log("LandingPageApplication | Initializing defaultOptions");
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: "landing-page",
       title: "Landing Page",
       template: "modules/foundry-landing/templates/landing-page.html",
@@ -28,6 +28,7 @@ export class LandingPageApplication extends FormApplication {
       showPlayerInfo: game.settings.get("foundry-landing", "showPlayerInfo"),
       npcs: this._getNpcs(),
       players: this._getPlayers(),
+      isGM: game.user.isGM,
     };
     console.log("LandingPageApplication | Data:", data);
     return data;
@@ -44,6 +45,7 @@ export class LandingPageApplication extends FormApplication {
           img: npc.img,
           description:
             npc.system.details?.biography?.value || "No description available",
+          isVisible: npc.getFlag("foundry-landing", "visible") ?? false,
         };
       });
     console.log("LandingPageApplication | NPCs found:", npcs.length);
@@ -81,8 +83,23 @@ export class LandingPageApplication extends FormApplication {
     super.activateListeners(html);
     console.log("LandingPageApplication | Activating Listeners");
 
+    if (game.user.isGM) {
+      // Add visibility toggle handlers for NPCs
+      html.find(".npc-visibility-toggle").click(async (ev) => {
+        const npcId = ev.currentTarget.dataset.npcId;
+        const npc = game.actors.get(npcId);
+        if (npc) {
+          const currentVisibility =
+            npc.getFlag("foundry-landing", "visible") ?? false;
+          await npc.setFlag("foundry-landing", "visible", !currentVisibility);
+          this.render();
+        }
+      });
+    }
+
     // Add click handlers for NPCs
     html.find(".npc-card").click((ev) => {
+      if (ev.target.classList.contains("npc-visibility-toggle")) return; // Don't open sheet when clicking toggle
       const npcId = ev.currentTarget.dataset.npcId;
       const npc = game.actors.get(npcId);
       if (npc) npc.sheet.render(true);

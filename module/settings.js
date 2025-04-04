@@ -27,4 +27,14 @@ export function registerSettings() {
     type: Boolean,
     default: true,
   });
+
+  // Add setting for visible NPCs
+  game.settings.register("foundry-landing", "visibleNpcs", {
+    name: "Visible NPCs",
+    hint: "List of NPC IDs that should be visible to players",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {},
+  });
 }
