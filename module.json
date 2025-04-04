@@ -17,7 +17,7 @@
     }
   ],
   "esmodules": ["module/main.js"],
-  "styles": [],
+  "styles": ["styles/landing.css"],
   "relationships": {
     "requires": [
       {
