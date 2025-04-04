@@ -153,16 +153,6 @@ export class LandingPageApplication extends FormApplication {
   }
 
   async _generateRecapWithAI(content, style) {
-    const apiKey = game.settings.get("foundry-landing", "openaiApiKey");
-    if (!apiKey) {
-      ui.notifications.error(
-        "Please configure your OpenAI API key in the module settings."
-      );
-      throw new Error("OpenAI API key not configured");
-    }
-
-    const model = game.settings.get("foundry-landing", "openaiModel");
-
     const stylePrompts = {
       dragonball:
         "Rewrite the following D&D session recap in the style of the Dragon Ball Z narrator, complete with dramatic tension and cliffhangers. Make it exciting and over-the-top, focusing on the epic moments and character power-ups. Start with 'Last time on [Campaign Name]...' and end with a dramatic question about what will happen next:",
@@ -178,43 +168,58 @@ export class LandingPageApplication extends FormApplication {
       throw new Error(`Unknown style: ${style}`);
     }
 
+    const endpoint = game.settings.get("foundry-landing", "localLlmEndpoint");
+    const model = game.settings.get("foundry-landing", "localLlmModel");
+
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.",
-              },
-              {
-                role: "user",
-                content: `${prompt}\n\nSession Notes:\n${content}`,
-              },
-            ],
-            temperature: 0.7,
-            max_tokens: 1000,
-          }),
+      // First, check if Ollama is running
+      try {
+        const healthCheck = await fetch(`${endpoint}/api/health`);
+        if (!healthCheck.ok) {
+          throw new Error("Ollama server is not responding");
         }
-      );
+      } catch (error) {
+        ui.notifications.error(
+          "Cannot connect to Ollama. Please make sure it's running."
+        );
+        throw new Error("Ollama connection failed: " + error.message);
+      }
+
+      // Generate the recap
+      const response = await fetch(`${endpoint}/api/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: model,
+          prompt: `You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.
+
+${prompt}
+
+Session Notes:
+${content}
+
+Remember to maintain the specified style throughout the recap and make it engaging for the players.`,
+          stream: false,
+          options: {
+            temperature: 0.7,
+            top_k: 50,
+            top_p: 0.9,
+            repeat_penalty: 1.1,
+            max_tokens: 1000,
+            stop: ["<end>"],
+          },
+        }),
+      });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(
-          `OpenAI API error: ${error.error?.message || "Unknown error"}`
-        );
+        const errorText = await response.text();
+        throw new Error(`Ollama API error: ${errorText}`);
       }
 
       const data = await response.json();
-      const recap = data.choices[0].message.content.trim();
+      const recap = data.response.trim();
 
       // Format the recap with some basic HTML
       return recap
@@ -222,7 +227,7 @@ export class LandingPageApplication extends FormApplication {
         .map((para) => (para.trim() ? `<p>${para}</p>` : ""))
         .join("");
     } catch (error) {
-      console.error("OpenAI API Error:", error);
+      console.error("Ollama Error:", error);
       throw new Error(`Failed to generate recap: ${error.message}`);
     }
   }

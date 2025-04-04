@@ -46,26 +46,29 @@ export function registerSettings() {
     default: "",
   });
 
-  // Add OpenAI API settings
-  game.settings.register("foundry-landing", "openaiApiKey", {
-    name: "OpenAI API Key",
-    hint: "Your OpenAI API key for generating session recaps",
+  // Local LLM settings
+  game.settings.register("foundry-landing", "localLlmEndpoint", {
+    name: "Local LLM Endpoint",
+    hint: "The endpoint URL for Ollama (usually http://localhost:11434)",
     scope: "world",
     config: true,
     type: String,
-    default: "",
+    default: "http://localhost:11434",
   });
 
-  game.settings.register("foundry-landing", "openaiModel", {
-    name: "OpenAI Model",
-    hint: "The OpenAI model to use for generating recaps",
+  game.settings.register("foundry-landing", "localLlmModel", {
+    name: "Local LLM Model",
+    hint: "The Ollama model to use (e.g., mistral, llama2, etc.)",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "gpt-4": "GPT-4 (Most capable)",
-      "gpt-3.5-turbo": "GPT-3.5 Turbo (Faster, cheaper)",
+      mistral: "Mistral (Recommended)",
+      llama2: "Llama 2",
+      codellama: "Code Llama",
+      "neural-chat": "Neural Chat",
+      "starling-lm": "Starling",
     },
-    default: "gpt-3.5-turbo",
+    default: "mistral",
   });
 }
