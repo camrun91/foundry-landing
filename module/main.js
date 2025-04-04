@@ -1,7 +1,9 @@
 import { registerSettings } from "./settings.js";
 import { LandingPageApplication } from "./apps/landing-page.js";
+import { LandingPageSettings } from "./apps/landing-page-settings.js";
 
 let landingPage;
+window.landingPage = null; // Make it accessible globally for the settings form
 
 console.log("Hello World! This code runs immediately when the file is loaded.");
 
@@ -19,12 +21,13 @@ Hooks.on("ready", () => {
     label: "Configure Landing Page",
     hint: "Configure the landing page settings including background image and display options.",
     icon: "fas fa-cog",
-    type: LandingPageApplication,
+    type: LandingPageSettings,
     restricted: true,
   });
 
   // Create initial landing page instance
   landingPage = new LandingPageApplication();
+  window.landingPage = landingPage;
 
   // Show landing page if game is paused
   if (game.paused) {
@@ -36,6 +39,7 @@ Hooks.on("ready", () => {
 Hooks.on("pauseGame", (isPaused) => {
   if (!landingPage) {
     landingPage = new LandingPageApplication();
+    window.landingPage = landingPage;
   }
 
   if (isPaused) {
@@ -67,6 +71,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
         onClick: () => {
           if (!landingPage) {
             landingPage = new LandingPageApplication();
+            window.landingPage = landingPage;
           }
           landingPage.render(true);
           $("#board").css("opacity", "0.1");
