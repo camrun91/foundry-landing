@@ -1,29 +1,27 @@
-export class LandingPageApplication extends FormApplication {
-  static get defaultOptions() {
-    console.log("LandingPageApplication | Initializing defaultOptions");
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "landing-page",
-      title: "Landing Page",
-      template: "modules/foundry-landing/templates/landing-page.html",
-      width: 960,
-      height: 700,
-      resizable: true,
-      closeOnSubmit: false,
-      submitOnChange: true,
-      popOut: true,
-      tabs: [
-        {
-          navSelector: ".tabs",
-          contentSelector: ".content",
-          initial: "general",
-        },
-      ],
-    });
+export class LandingPageApplication {
+  constructor() {
+    this.initialized = false;
+  }
+
+  initialize() {
+    if (this.initialized) return;
+
+    // Create the landing page container
+    const landingPage = document.createElement("div");
+    landingPage.id = "landing-page-background";
+    landingPage.classList.add("landing-page-background");
+
+    // Insert it as the first child of the body, before the game canvas
+    document.body.insertBefore(landingPage, document.body.firstChild);
+
+    this.element = landingPage;
+    this.initialized = true;
+
+    this.render();
   }
 
   getData() {
-    console.log("LandingPageApplication | Getting Data");
-    const data = {
+    return {
       backgroundImage: game.settings.get("foundry-landing", "backgroundImage"),
       showNpcHistory: game.settings.get("foundry-landing", "showNpcHistory"),
       showPlayerInfo: game.settings.get("foundry-landing", "showPlayerInfo"),
@@ -32,59 +30,53 @@ export class LandingPageApplication extends FormApplication {
       isGM: game.user.isGM,
       isPaused: game.paused,
     };
-    console.log("LandingPageApplication | Data:", data);
-    return data;
   }
 
   _getNpcs() {
-    console.log("LandingPageApplication | Getting NPCs");
-    const npcs = game.actors
+    return game.actors
       .filter((actor) => actor.type === "npc")
-      .map((npc) => {
-        return {
-          id: npc.id,
-          name: npc.name,
-          img: npc.img,
-          description:
-            npc.system.details?.biography?.value || "No description available",
-          isVisible: npc.getFlag("foundry-landing", "visible") ?? false,
-        };
-      });
-    console.log("LandingPageApplication | NPCs found:", npcs.length);
-    return npcs;
+      .map((npc) => ({
+        id: npc.id,
+        name: npc.name,
+        img: npc.img,
+        description:
+          npc.system.details?.biography?.value || "No description available",
+        isVisible: npc.getFlag("foundry-landing", "visible") ?? false,
+      }));
   }
 
   _getPlayers() {
-    console.log("LandingPageApplication | Getting Players");
-    const players = game.actors
+    return game.actors
       .filter((actor) => actor.type === "character")
-      .map((player) => {
-        return {
-          id: player.id,
-          name: player.name,
-          img: player.img,
-          class: player.system.details?.class?.value || "Unknown",
-          level: player.system.details?.level?.value || "Unknown",
-          description:
-            player.system.details?.biography?.value ||
-            "No description available",
-        };
-      });
-    console.log("LandingPageApplication | Players found:", players.length);
-    return players;
+      .map((player) => ({
+        id: player.id,
+        name: player.name,
+        img: player.img,
+        class: player.system.details?.class?.value || "Unknown",
+        level: player.system.details?.level?.value || "Unknown",
+        description:
+          player.system.details?.biography?.value || "No description available",
+      }));
   }
 
-  async _updateObject(event, formData) {
-    for (let [key, value] of Object.entries(formData)) {
-      await game.settings.set("foundry-landing", key, value);
+  async render(show = true) {
+    if (!this.initialized) this.initialize();
+
+    if (show) {
+      const data = this.getData();
+      const content = await renderTemplate(
+        "modules/foundry-landing/templates/landing-page.html",
+        data
+      );
+      this.element.innerHTML = content;
+      this.element.style.display = "block";
+      this.activateListeners($(this.element));
+    } else {
+      this.element.style.display = "none";
     }
-    this.render();
   }
 
   activateListeners(html) {
-    super.activateListeners(html);
-    console.log("LandingPageApplication | Activating Listeners");
-
     if (game.user.isGM) {
       // Add visibility toggle handlers for NPCs
       html.find(".npc-visibility-toggle").click(async (ev) => {
@@ -101,7 +93,7 @@ export class LandingPageApplication extends FormApplication {
 
     // Add click handlers for NPCs
     html.find(".npc-card").click((ev) => {
-      if (ev.target.classList.contains("npc-visibility-toggle")) return; // Don't open sheet when clicking toggle
+      if (ev.target.classList.contains("npc-visibility-toggle")) return;
       const npcId = ev.currentTarget.dataset.npcId;
       const npc = game.actors.get(npcId);
       if (npc) npc.sheet.render(true);
@@ -115,18 +107,7 @@ export class LandingPageApplication extends FormApplication {
     });
   }
 
-  render(force = false, options = {}) {
-    console.log("LandingPageApplication | Rendering");
-    return super.render(force, options);
-  }
-
-  setPosition(options = {}) {
-    if (game.paused) {
-      options.width = "100%";
-      options.height = "100%";
-      options.top = 0;
-      options.left = 0;
-    }
-    return super.setPosition(options);
+  close() {
+    this.render(false);
   }
 }

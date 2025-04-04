@@ -41,11 +41,13 @@ Hooks.on("pauseGame", (isPaused) => {
   if (isPaused) {
     // Game was paused, show landing page
     landingPage.render(true);
-    // Add fullscreen overlay class to landing page
-    landingPage.element.addClass("fullscreen-overlay");
+    // Fade out the canvas
+    $("#board").css("opacity", "0.1");
   } else {
     // Game was unpaused, hide landing page
     landingPage.close();
+    // Restore canvas opacity
+    $("#board").css("opacity", "1");
   }
 });
 
@@ -67,6 +69,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
             landingPage = new LandingPageApplication();
           }
           landingPage.render(true);
+          $("#board").css("opacity", "0.1");
         },
       },
     ],
