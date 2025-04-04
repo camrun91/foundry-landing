@@ -22,6 +22,7 @@ export class LandingPageApplication extends FormApplication {
       players: this._getPlayers(),
       isGM: game.user.isGM,
       isPaused: game.paused,
+      recap: game.settings.get("foundry-landing", "lastRecap"),
     };
   }
 
@@ -101,6 +102,128 @@ export class LandingPageApplication extends FormApplication {
         },
       });
       this._dragDrop.bind(html[0]);
+
+      // Add recap generation handler
+      html.find(".generate-recap").click(this._onGenerateRecap.bind(this));
+    }
+  }
+
+  async _onGenerateRecap(event) {
+    const button = event.currentTarget;
+    const form = button.closest(".recap-controls");
+    const text = form.querySelector("[name='recap-text']").value.trim();
+    const file = form.querySelector("[name='recap-file']").files[0];
+    const style = form.querySelector("[name='recap-style']").value;
+
+    if (!text && !file) {
+      ui.notifications.warn(
+        "Please provide either text or a file for the recap."
+      );
+      return;
+    }
+
+    button.classList.add("loading");
+    button.querySelector("i").classList.replace("fa-magic", "fa-spinner");
+
+    try {
+      let content = text;
+      if (file) {
+        content = await this._readFileContent(file);
+      }
+
+      const recap = await this._generateRecapWithAI(content, style);
+      await game.settings.set("foundry-landing", "lastRecap", recap);
+      this.render(true);
+    } catch (error) {
+      ui.notifications.error("Failed to generate recap. Please try again.");
+      console.error(error);
+    } finally {
+      button.classList.remove("loading");
+      button.querySelector("i").classList.replace("fa-spinner", "fa-magic");
+    }
+  }
+
+  async _readFileContent(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = (e) => reject(e);
+      reader.readAsText(file);
+    });
+  }
+
+  async _generateRecapWithAI(content, style) {
+    const apiKey = game.settings.get("foundry-landing", "openaiApiKey");
+    if (!apiKey) {
+      ui.notifications.error(
+        "Please configure your OpenAI API key in the module settings."
+      );
+      throw new Error("OpenAI API key not configured");
+    }
+
+    const model = game.settings.get("foundry-landing", "openaiModel");
+
+    const stylePrompts = {
+      dragonball:
+        "Rewrite the following D&D session recap in the style of the Dragon Ball Z narrator, complete with dramatic tension and cliffhangers. Make it exciting and over-the-top, focusing on the epic moments and character power-ups. Start with 'Last time on [Campaign Name]...' and end with a dramatic question about what will happen next:",
+      noir: "Rewrite the following D&D session recap in the style of a hard-boiled film noir detective's case notes. Include atmospheric details, cynical observations, and treat the fantasy elements as mysterious and dangerous. Make it gritty and atmospheric:",
+      bard: "Rewrite the following D&D session recap as a medieval bard's tale, complete with flowery language, heroic descriptions, and perhaps even a verse or two. Make it grand and theatrical, as if being performed in a medieval tavern:",
+      news: "Rewrite the following D&D session recap as a fantasy newspaper report, complete with headlines, quotes from witnesses, and journalistic style. Include dramatic testimonies and expert opinions from sage wizards or local authorities:",
+      letter:
+        "Rewrite the following D&D session recap as a personal letter from one of the party members to a friend or family member. Make it personal and reflective, sharing both the events and the character's feelings about them:",
+    };
+
+    const prompt = stylePrompts[style];
+    if (!prompt) {
+      throw new Error(`Unknown style: ${style}`);
+    }
+
+    try {
+      const response = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.",
+              },
+              {
+                role: "user",
+                content: `${prompt}\n\nSession Notes:\n${content}`,
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 1000,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          `OpenAI API error: ${error.error?.message || "Unknown error"}`
+        );
+      }
+
+      const data = await response.json();
+      const recap = data.choices[0].message.content.trim();
+
+      // Format the recap with some basic HTML
+      return recap
+        .split("\n")
+        .map((para) => (para.trim() ? `<p>${para}</p>` : ""))
+        .join("");
+    } catch (error) {
+      console.error("OpenAI API Error:", error);
+      throw new Error(`Failed to generate recap: ${error.message}`);
     }
   }
 

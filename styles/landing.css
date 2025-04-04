@@ -172,4 +172,127 @@
   .npc-card, .player-card {
     width: 120px;
   }
+}
+
+.recap-section {
+    background: rgba(0, 0, 0, 0.8);
+    border-top: 2px solid #666;
+    padding: 2em;
+    margin-top: 2em;
+    position: relative;
+    z-index: 10;
+}
+
+.recap-section h2 {
+    color: #fff;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.recap-content {
+    background: rgba(50, 50, 50, 0.6);
+    border: 1px solid #666;
+    border-radius: 5px;
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+    color: #fff;
+    font-size: 1.1em;
+    line-height: 1.6;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.recap-controls {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5em;
+    align-items: start;
+}
+
+.recap-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.recap-input-group label {
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+.recap-input-group textarea {
+    min-height: 100px;
+    padding: 0.5em;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #666;
+    border-radius: 3px;
+    color: #fff;
+    resize: vertical;
+}
+
+.file-input-group {
+    margin-top: 0.5em;
+}
+
+.file-input-group input[type="file"] {
+    width: 100%;
+    padding: 0.5em;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #666;
+    border-radius: 3px;
+    color: #fff;
+}
+
+.recap-style-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.recap-style-group label {
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+.recap-style-group select {
+    padding: 0.5em;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #666;
+    border-radius: 3px;
+    color: #fff;
+}
+
+.generate-recap {
+    grid-column: span 2;
+    padding: 0.75em;
+    background: #4a5;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+.generate-recap:hover {
+    background: #5b6;
+}
+
+.generate-recap i {
+    font-size: 1.2em;
+}
+
+/* Loading state */
+.generate-recap.loading {
+    background: #666;
+    pointer-events: none;
+}
+
+.generate-recap.loading i {
+    animation: fa-spin 2s infinite linear;
 } 

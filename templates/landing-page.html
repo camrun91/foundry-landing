@@ -36,4 +36,39 @@
         </div>
         {{/if}}
     </div>
+
+    <div class="recap-section">
+        <h2>Last Session Recap</h2>
+        {{#if recap}}
+        <div class="recap-content">
+            {{{recap}}}
+        </div>
+        {{/if}}
+        
+        {{#if isGM}}
+        <div class="recap-controls">
+            <div class="recap-input-group">
+                <label>Session Notes:</label>
+                <textarea name="recap-text" placeholder="Paste your session notes here..."></textarea>
+                <div class="file-input-group">
+                    <label>Or upload a file:</label>
+                    <input type="file" name="recap-file" accept=".txt,.md,.doc,.docx">
+                </div>
+            </div>
+            <div class="recap-style-group">
+                <label>Recap Style:</label>
+                <select name="recap-style">
+                    <option value="dragonball">Dragon Ball Z Narrator</option>
+                    <option value="noir">Film Noir Detective</option>
+                    <option value="bard">Medieval Bard</option>
+                    <option value="news">Fantasy News Report</option>
+                    <option value="letter">In-Character Letter</option>
+                </select>
+            </div>
+            <button type="button" class="generate-recap">
+                <i class="fas fa-magic"></i> Generate Recap
+            </button>
+        </div>
+        {{/if}}
+    </div>
 </div> 
