@@ -72,24 +72,13 @@
   color: #ccc;
 }
 
-.npc-visibility-toggle {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: none;
-  border: none;
-  color: #ccc;
-  cursor: pointer;
-  padding: 5px;
-  transition: color 0.2s ease;
+/* Add styles for the actor sheet visibility toggle */
+.toggle-landing-visibility {
+  margin-right: 4px;
 }
 
-.npc-visibility-toggle:hover {
-  color: #fff;
-}
-
-.npc-visibility-toggle i {
-  font-size: 1.2em;
+.toggle-landing-visibility i.fa-eye-slash {
+  opacity: 0.5;
 }
 
 /* Fullscreen overlay styles */

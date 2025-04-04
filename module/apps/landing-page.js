@@ -48,17 +48,19 @@ export class LandingPageApplication extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Handle NPC visibility toggle
-    if (game.user.isGM) {
-      html.find(".npc-visibility-toggle").click(async (event) => {
-        const npcId = event.currentTarget.dataset.npcId;
-        const npc = game.actors.get(npcId);
-        const currentVisibility =
-          npc.getFlag("foundry-landing", "visible") ?? true;
-        await npc.setFlag("foundry-landing", "visible", !currentVisibility);
-        this.render(true);
-      });
-    }
+    // Add click handlers for NPCs
+    html.find(".npc-card").click((ev) => {
+      const npcId = ev.currentTarget.dataset.npcId;
+      const npc = game.actors.get(npcId);
+      if (npc) npc.sheet.render(true);
+    });
+
+    // Add click handlers for Players
+    html.find(".player-card").click((ev) => {
+      const playerId = ev.currentTarget.dataset.playerId;
+      const player = game.actors.get(playerId);
+      if (player) player.sheet.render(true);
+    });
   }
 
   async close(options = {}) {

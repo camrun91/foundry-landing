@@ -80,3 +80,26 @@ Hooks.on("getSceneControlButtons", (controls) => {
     ],
   });
 });
+
+// Add the visibility toggle button to NPC actor sheets
+Hooks.on("getActorSheet", (sheet, buttons) => {
+  if (!game.user.isGM || sheet.actor.type !== "npc") return;
+
+  buttons.unshift({
+    label: "Landing Page Visibility",
+    class: "toggle-landing-visibility",
+    icon: "fas fa-eye",
+    onclick: async () => {
+      const currentVisibility =
+        sheet.actor.getFlag("foundry-landing", "visible") ?? true;
+      await sheet.actor.setFlag(
+        "foundry-landing",
+        "visible",
+        !currentVisibility
+      );
+      // Update the button icon
+      const button = sheet.element.find(".toggle-landing-visibility i");
+      button.toggleClass("fa-eye fa-eye-slash");
+    },
+  });
+});
