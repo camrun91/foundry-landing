@@ -105,6 +105,9 @@ export class LandingPageApplication extends FormApplication {
 
       // Add recap generation handler
       html.find(".generate-recap").click(this._onGenerateRecap.bind(this));
+
+      // Add test connection handler
+      html.find(".test-connection").click(this._onTestConnection.bind(this));
     }
   }
 
@@ -398,6 +401,120 @@ Remember to maintain the specified style throughout the recap and make it engagi
     const actorId = card.dataset.actorId;
     const actor = game.actors.get(actorId);
     await actor.setFlag("foundry-landing", "position", { x, y });
+  }
+
+  async _onTestConnection(event) {
+    const button = event.currentTarget;
+    const provider = game.settings.get("foundry-landing", "llmProvider");
+
+    button.classList.add("loading");
+    button.querySelector("i").classList.replace("fa-plug", "fa-spinner");
+    button.disabled = true;
+
+    try {
+      let success = false;
+      switch (provider) {
+        case "openai":
+          success = await this._testOpenAI();
+          break;
+        case "huggingface":
+          success = await this._testHuggingFace();
+          break;
+        case "ollama":
+          success = await this._testOllama();
+          break;
+        default:
+          throw new Error(`Unknown provider: ${provider}`);
+      }
+
+      if (success) {
+        button.classList.remove("loading", "error");
+        button.classList.add("success");
+        button.querySelector("i").classList.replace("fa-spinner", "fa-check");
+        ui.notifications.success(`Successfully connected to ${provider}!`);
+      }
+    } catch (error) {
+      console.error("Connection Test Error:", error);
+      button.classList.remove("loading", "success");
+      button.classList.add("error");
+      button.querySelector("i").classList.replace("fa-spinner", "fa-times");
+      ui.notifications.error(
+        `Failed to connect to ${provider}: ${error.message}`
+      );
+    } finally {
+      button.disabled = false;
+      // Reset button state after 3 seconds
+      setTimeout(() => {
+        button.classList.remove("loading", "success", "error");
+        button.querySelector("i").classList.replace("fa-check", "fa-plug");
+        button.querySelector("i").classList.replace("fa-times", "fa-plug");
+      }, 3000);
+    }
+  }
+
+  async _testOpenAI() {
+    const apiKey = game.settings.get("foundry-landing", "openaiApiKey");
+    if (!apiKey) {
+      throw new Error("OpenAI API key not configured");
+    }
+
+    const response = await fetch("https://api.openai.com/v1/models", {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || "Failed to connect to OpenAI");
+    }
+
+    return true;
+  }
+
+  async _testHuggingFace() {
+    const apiKey = game.settings.get("foundry-landing", "hfApiKey");
+    if (!apiKey) {
+      throw new Error("Hugging Face API key not configured");
+    }
+
+    const model = game.settings.get("foundry-landing", "hfModel");
+    const response = await fetch(
+      `https://api-inference.huggingface.co/models/${model}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          inputs: "Test connection",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || "Failed to connect to Hugging Face");
+    }
+
+    return true;
+  }
+
+  async _testOllama() {
+    const endpoint = game.settings.get("foundry-landing", "ollamaEndpoint");
+
+    try {
+      const healthCheck = await fetch(`${endpoint}/api/health`);
+      if (!healthCheck.ok) {
+        throw new Error("Ollama server is not responding");
+      }
+      return true;
+    } catch (error) {
+      throw new Error(
+        "Cannot connect to Ollama. Please make sure it's running."
+      );
+    }
   }
 
   async close(options = {}) {

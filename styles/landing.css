@@ -263,28 +263,54 @@
     color: #fff;
 }
 
-.generate-recap {
-    grid-column: span 2;
-    padding: 0.75em;
-    background: #4a5;
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 8px 16px;
     border: none;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 1.1em;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5em;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.generate-recap {
+    background-color: #4a90e2;
+    color: white;
 }
 
 .generate-recap:hover {
-    background: #5b6;
+    background-color: #357abd;
 }
 
-.generate-recap i {
-    font-size: 1.2em;
+.test-connection {
+    background-color: #6c757d;
+    color: white;
+}
+
+.test-connection:hover {
+    background-color: #5a6268;
+}
+
+.test-connection.loading {
+    background-color: #6c757d;
+    cursor: wait;
+}
+
+.test-connection.success {
+    background-color: #28a745;
+}
+
+.test-connection.error {
+    background-color: #dc3545;
 }
 
 /* Loading state */
