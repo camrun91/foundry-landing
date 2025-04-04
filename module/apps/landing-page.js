@@ -1,4 +1,4 @@
-export class LandingPageApplication extends Application {
+export class LandingPageApplication extends FormApplication {
   static get defaultOptions() {
     console.log("LandingPageApplication | Initializing defaultOptions");
     return mergeObject(super.defaultOptions, {
@@ -8,8 +8,15 @@ export class LandingPageApplication extends Application {
       width: 960,
       height: 700,
       resizable: true,
-      popOut: true,
-      classes: ["landing-page"],
+      closeOnSubmit: false,
+      submitOnChange: true,
+      tabs: [
+        {
+          navSelector: ".tabs",
+          contentSelector: ".content",
+          initial: "general",
+        },
+      ],
     });
   }
 
@@ -61,6 +68,13 @@ export class LandingPageApplication extends Application {
       });
     console.log("LandingPageApplication | Players found:", players.length);
     return players;
+  }
+
+  async _updateObject(event, formData) {
+    for (let [key, value] of Object.entries(formData)) {
+      await game.settings.set("foundry-landing", key, value);
+    }
+    this.render();
   }
 
   activateListeners(html) {
