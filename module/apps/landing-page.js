@@ -72,16 +72,6 @@ export class LandingPageApplication extends FormApplication {
       });
     });
 
-    if (game.user.isGM) {
-      // Set up drag handling for GMs
-      cards.each((i, card) => {
-        card.setAttribute("draggable", true);
-        card.addEventListener("dragstart", this._onDragStart.bind(this));
-        card.addEventListener("drag", this._onDrag.bind(this));
-        card.addEventListener("dragend", this._onDragEnd.bind(this));
-      });
-    }
-
     // Add click handlers for NPCs
     html.find(".npc-card").click((ev) => {
       if ($(ev.target).hasClass("drag-handle")) return;
@@ -97,50 +87,54 @@ export class LandingPageApplication extends FormApplication {
       const player = game.actors.get(playerId);
       if (player) player.sheet.render(true);
     });
+
+    if (game.user.isGM) {
+      // Set up drag-drop for GMs
+      this._dragDrop = new DragDrop({
+        dragSelector: ".npc-card, .player-card",
+        dropSelector: ".character-container",
+        permissions: { dragstart: () => true, drop: () => true },
+        callbacks: {
+          dragstart: this._onDragStart.bind(this),
+          dragover: this._onDragOver.bind(this),
+          drop: this._onDrop.bind(this),
+        },
+      });
+      this._dragDrop.bind(html[0]);
+    }
   }
 
   _onDragStart(event) {
-    const card = event.currentTarget;
-    card.classList.add("dragging");
-
-    // Store the initial mouse position relative to the card
-    const rect = card.getBoundingClientRect();
-    card.dataset.offsetX = event.clientX - rect.left;
-    card.dataset.offsetY = event.clientY - rect.top;
+    event.currentTarget.classList.add("dragging");
   }
 
-  _onDrag(event) {
-    if (!event.clientX || !event.clientY) return; // Ignore invalid drag events
+  _onDragOver(event) {
+    event.preventDefault();
+    const card = event.target.closest(".npc-card, .player-card");
+    if (!card) return;
 
-    const card = event.currentTarget;
-    const container = card.parentElement;
+    const container = card.closest(".character-container");
+    if (!container) return;
+
     const containerRect = container.getBoundingClientRect();
+    const x =
+      ((event.clientX - containerRect.left) / containerRect.width) * 100;
+    const y =
+      ((event.clientY - containerRect.top) / containerRect.height) * 100;
 
-    // Calculate new position considering the initial offset
-    const offsetX = Number(card.dataset.offsetX);
-    const offsetY = Number(card.dataset.offsetY);
-
-    let left = event.clientX - containerRect.left - offsetX;
-    let top = event.clientY - containerRect.top - offsetY;
-
-    // Constrain to container bounds
-    left = Math.max(0, Math.min(left, containerRect.width - card.offsetWidth));
-    top = Math.max(0, Math.min(top, containerRect.height - card.offsetHeight));
-
-    // Convert to percentages
-    const xPercent = (left / containerRect.width) * 100;
-    const yPercent = (top / containerRect.height) * 100;
-
-    card.style.left = xPercent + "%";
-    card.style.top = yPercent + "%";
+    card.style.left = x + "%";
+    card.style.top = y + "%";
   }
 
-  async _onDragEnd(event) {
-    const card = event.currentTarget;
-    card.classList.remove("dragging");
+  async _onDrop(event) {
+    event.preventDefault();
+    const card = event.target.closest(".npc-card, .player-card");
+    if (!card) return;
 
-    // Save the final position
-    const container = card.parentElement;
+    card.classList.remove("dragging");
+    const container = card.closest(".character-container");
+    if (!container) return;
+
     const containerRect = container.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
 
@@ -154,6 +148,9 @@ export class LandingPageApplication extends FormApplication {
   }
 
   async close(options = {}) {
+    if (this._dragDrop) {
+      this._dragDrop.destroy();
+    }
     $("#board").css("opacity", "1");
     return super.close(options);
   }
