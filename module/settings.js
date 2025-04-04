@@ -135,3 +135,36 @@ export function registerSettings() {
     default: "mistral",
   });
 }
+
+Hooks.on("init", () => {
+  registerSettings();
+});
+
+Hooks.on("ready", () => {
+  // Initialize provider settings visibility
+  const provider = game.settings.get("foundry-landing", "llmProvider");
+  updateProviderSettings(provider);
+
+  // Add change listener for provider selection
+  const providerSelect = document.querySelector("#llmProvider");
+  if (providerSelect) {
+    providerSelect.addEventListener("change", (event) => {
+      updateProviderSettings(event.target.value);
+    });
+  }
+});
+
+function updateProviderSettings(provider) {
+  // Hide all provider settings
+  document.querySelectorAll(".provider-settings").forEach((el) => {
+    el.classList.remove("active");
+  });
+
+  // Show selected provider settings
+  const selectedSettings = document.querySelector(
+    `.provider-settings[data-provider="${provider}"]`
+  );
+  if (selectedSettings) {
+    selectedSettings.classList.add("active");
+  }
+}
