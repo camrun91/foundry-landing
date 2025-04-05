@@ -1,44 +1,30 @@
 {
   "name": "foundry-landing",
   "title": "Foundry Landing Page",
-  "description": "A customizable landing page module for Foundry VTT with NPC history and player information",
-  "version": "0.0.26",
-  "minimumCoreVersion": "12.0.0",
-  "compatibleCoreVersion": "12.0.0",
+  "description": "A landing page for Foundry VTT",
+  "version": "1.0.0",
   "compatibility": {
-    "minimum": "12.0.0",
-    "verified": "12.0.0",
-    "maximum": "12"
+    "minimum": "10",
+    "verified": "11"
   },
   "authors": [
     {
-      "name": "camrun91",
-      "url": "https://github.com/camrun91"
+      "name": "Your Name",
+      "email": "your.email@example.com",
+      "url": "https://your-website.com"
     }
   ],
-  "esmodules": ["module/main.js"],
+  "esmodules": ["module/init.js", "module/scenes/landing-scene.js"],
   "styles": ["styles/landing.css"],
+  "packs": [],
   "relationships": {
-    "requires": [
-      {
-        "id": "lib-wrapper",
-        "type": "module",
-        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json"
-      }
-    ]
+    "systems": []
   },
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    }
-  ],
-  "url": "https://github.com/camrun91/foundry-landing",
-  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json",
-  "download": "https://github.com/camrun91/foundry-landing/archive/main.zip",
-  "readme": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/README.md",
-  "changelog": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/CHANGELOG.md",
-  "bugs": "https://github.com/camrun91/foundry-landing/issues",
-  "allowBugReporter": true
+  "url": "https://github.com/yourusername/foundry-landing",
+  "manifest": "https://github.com/yourusername/foundry-landing/releases/latest/download/module.json",
+  "download": "https://github.com/yourusername/foundry-landing/releases/latest/download/module.zip",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "bugs": "https://github.com/yourusername/foundry-landing/issues",
+  "changelog": "https://github.com/yourusername/foundry-landing/releases"
 }

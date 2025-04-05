@@ -1,61 +1,69 @@
 # Foundry Landing Page
 
-A customizable landing page module for Foundry VTT that provides a beautiful and functional landing page for your game, featuring NPC history and player information.
+A Foundry VTT module that provides a landing page scene for your game.
 
 ## Features
 
-- **Customizable Background**: Set any image as your landing page background
-- **NPC History Section**: Display information about NPCs your players have encountered
-- **Player Information Section**: Show details about player characters
-- **Responsive Design**: Works well on all screen sizes
-- **Easy Configuration**: Simple settings to customize your landing page
+- **Landing Page Scene**: A dedicated scene for your game's landing page
+- **NPC and Player Display**: Show NPCs and players on the landing page
+- **Visibility Controls**: Control which NPCs and players are visible
+- **Drag and Drop**: Reposition NPCs and players on the landing page
+- **Background Image**: Set a custom background image for the landing page
 
 ## Installation
 
-1. In the Foundry VTT setup screen, go to the "Add-on Modules" tab
+1. In Foundry VTT, go to the "Add-on Modules" tab
 2. Click "Install Module"
-3. Search for "Foundry Landing Page"
-4. Click "Install" next to the module listing
+3. Enter the following URL: `https://github.com/yourusername/foundry-landing/releases/latest/download/module.json`
+4. Click "Install"
 
 ## Usage
 
 ### Accessing the Landing Page
 
-The landing page can be accessed in several ways:
-1. Through the module settings in the Foundry VTT settings menu
-2. Via the sidebar button (if enabled in settings)
-3. Through the landing page application itself
+The landing page is available as a scene in your game. To access it:
 
-### Configuration
+1. Go to the Scenes Directory
+2. Find the "Landing Page" scene
+3. Click on it to view the landing page
 
-The module can be configured through the Module Settings menu:
+Alternatively, you can use the "Open Landing Page" option in the scene directory context menu.
 
-1. **Background Image**: Set the URL or path to your desired background image
-2. **Show NPC History**: Toggle the NPC history section on/off
-3. **Show Player Information**: Toggle the player information section on/off
-4. **Show Sidebar Button**: Toggle the sidebar button on/off
+### Controlling Visibility
 
-## Compatibility
+As a GM, you can control which NPCs and players are visible on the landing page:
 
-- Foundry VTT v12.0.0 or later
-- Tested with Foundry VTT v12.0.0
+1. On the landing page, you'll see two dropdown menus at the top: "NPC Visibility" and "Player Visibility"
+2. Click on a dropdown to see the list of NPCs or players
+3. Check or uncheck the boxes to show or hide NPCs and players
+4. Changes are applied immediately
 
-## Dependencies
+### Repositioning NPCs and Players
 
-- lib-wrapper
+As a GM, you can reposition NPCs and players on the landing page:
 
-## Support
+1. Hover over an NPC or player card
+2. Click and drag the card to reposition it
+3. Release to set the new position
+4. Positions are saved automatically
 
-For support, feature requests, or bug reports, please visit the [GitHub Issues](https://github.com/yourusername/foundry-landing/issues) page.
+### Setting the Background Image
+
+To set a custom background image for the landing page:
+
+1. Go to the Module Settings
+2. Find the "Foundry Landing Page" section
+3. Set the "Background Image" URL
+4. Click "Save Changes"
 
 ## License
 
-This module is licensed under the MIT License - see the LICENSE file for details.
+This module is licensed under the MIT License. See the LICENSE file for details.
 
 ## Credits
 
-- Author: Your Name
-- Special thanks to the Foundry VTT community for their support and inspiration
+- Created by Your Name
+- Inspired by various landing page modules for Foundry VTT
 
 ## Changelog
 

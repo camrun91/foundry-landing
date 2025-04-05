@@ -34,76 +34,317 @@
 }
 
 .landing-page-content {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  padding: 1em;
+  overflow: auto;
+  z-index: 10;
 }
 
 .character-container {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  padding: 1em;
   position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 200px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  margin: 1em 0;
-  padding: 1em;
 }
 
-.npc-card, .player-card {
-  background: rgba(50, 50, 50, 0.8);
-  border: 1px solid #666;
-  border-radius: 5px;
-  padding: 1em;
+.character-container h2 {
+  margin: 0 0 1em 0;
+  color: #fff;
   text-align: center;
+  font-size: 1.5em;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1em;
+  position: relative;
+  min-height: 200px;
+}
+
+.npc-card,
+.player-card {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   cursor: move;
-  transition: transform 0.2s ease;
-  position: absolute;
-  width: 150px;
-  z-index: 1;
-  user-select: none;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.npc-card:hover, .player-card:hover {
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  z-index: 2;
+.npc-card:hover,
+.player-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.npc-card.dragging, .player-card.dragging {
-  opacity: 0.8;
-  transform: scale(1.05);
-  z-index: 2;
-  cursor: grabbing;
-}
-
-.npc-card img, .player-card img {
+.npc-card img,
+.player-card img {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  margin-bottom: 0.5em;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.npc-card h3, .player-card h3 {
-  margin: 0;
-  color: #fff;
-  font-size: 1.2em;
-}
-
-.npc-metadata, .player-metadata {
+.npc-card .name,
+.player-card .name {
   margin-top: 0.5em;
-  font-size: 0.9em;
-  color: #ccc;
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .drag-handle {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  color: #ccc;
+  top: 0.5em;
+  right: 0.5em;
+  color: rgba(255, 255, 255, 0.5);
   cursor: move;
 }
 
-.drag-handle:hover {
+.npc-card.dragging,
+.player-card.dragging {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+/* Scene-specific styles */
+.scene-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.scene-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+/* Landing page content */
+.landing-page-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  padding: 1em;
+  overflow: auto;
+  z-index: 10;
+}
+
+.character-container {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  padding: 1em;
+  position: relative;
+}
+
+.character-container h2 {
+  margin: 0 0 1em 0;
   color: #fff;
+  text-align: center;
+  font-size: 1.5em;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1em;
+  position: relative;
+  min-height: 200px;
+}
+
+.npc-card,
+.player-card {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: move;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.npc-card:hover,
+.player-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.npc-card img,
+.player-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.npc-card .name,
+.player-card .name {
+  margin-top: 0.5em;
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: move;
+}
+
+.npc-card.dragging,
+.player-card.dragging {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+/* Visibility controls */
+.visibility-controls {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1em;
+  padding: 0.5em;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  z-index: 20;
+}
+
+.header-controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  padding: 0.5em;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px 8px 0 0;
+  z-index: 20;
+}
+
+.visibility-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.visibility-toggle {
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: all 0.2s ease;
+}
+
+.visibility-toggle:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.visibility-toggle i {
+  font-size: 0.9em;
+}
+
+.visibility-toggle i.fa-chevron-down {
+  margin-left: 0.5em;
+  transition: transform 0.2s ease;
+}
+
+.visibility-dropdown.active .visibility-toggle i.fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+.visibility-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  display: none;
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.visibility-dropdown.active .visibility-content {
+  display: block;
+}
+
+.visibility-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.visibility-item {
+  padding: 0.5em;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.visibility-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.visibility-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.9em;
+}
+
+.visibility-item input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
 }
 
 /* Add styles for the actor sheet visibility toggle */
