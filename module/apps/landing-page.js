@@ -179,12 +179,6 @@ export class LandingPageApplication extends FormApplication {
         case "openai":
           recap = await this._generateWithOpenAI(prompt, content);
           break;
-        case "huggingface":
-          recap = await this._generateWithHuggingFace(prompt, content);
-          break;
-        case "ollama":
-          recap = await this._generateWithOllama(prompt, content);
-          break;
         default:
           throw new Error(`Unknown provider: ${provider}`);
       }
@@ -254,153 +248,67 @@ export class LandingPageApplication extends FormApplication {
     }
   }
 
-  async _generateWithHuggingFace(prompt, content) {
-    const apiKey = game.settings.get("foundry-landing", "hfApiKey");
-    if (!apiKey) {
-      ui.notifications.error(
-        "Please configure your Hugging Face API key in the module settings."
-      );
-      throw new Error("Hugging Face API key not configured");
-    }
-
-    const model = game.settings.get("foundry-landing", "hfModel");
-
-    try {
-      const response = await fetch(
-        `https://api-inference.huggingface.co/models/${model}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            inputs: `You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.
-
-${prompt}
-
-Session Notes:
-${content}
-
-Remember to maintain the specified style throughout the recap and make it engaging for the players.`,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Hugging Face API error: ${error}`);
-      }
-
-      const data = await response.json();
-      return Array.isArray(data) ? data[0].generated_text : data.generated_text;
-    } catch (error) {
-      console.error("Hugging Face Error:", error);
-      throw new Error(
-        `Failed to generate recap with Hugging Face: ${error.message}`
-      );
-    }
-  }
-
-  async _generateWithOllama(prompt, content) {
-    const endpoint = game.settings.get("foundry-landing", "ollamaEndpoint");
-    const model = game.settings.get("foundry-landing", "ollamaModel");
-
-    try {
-      // First, check if Ollama is running
-      try {
-        const healthCheck = await fetch(`${endpoint}/api/health`);
-        if (!healthCheck.ok) {
-          throw new Error("Ollama server is not responding");
-        }
-      } catch (error) {
-        ui.notifications.error(
-          "Cannot connect to Ollama. Please make sure it's running."
-        );
-        throw new Error("Ollama connection failed: " + error.message);
-      }
-
-      const response = await fetch(`${endpoint}/api/generate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: model,
-          prompt: `You are a creative writing assistant specializing in transforming D&D session notes into engaging narratives.
-
-${prompt}
-
-Session Notes:
-${content}
-
-Remember to maintain the specified style throughout the recap and make it engaging for the players.`,
-          stream: false,
-          options: {
-            temperature: 0.7,
-            top_k: 50,
-            top_p: 0.9,
-            repeat_penalty: 1.1,
-            max_tokens: 1000,
-            stop: ["<end>"],
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Ollama API error: ${errorText}`);
-      }
-
-      const data = await response.json();
-      return data.response.trim();
-    } catch (error) {
-      console.error("Ollama Error:", error);
-      throw new Error(`Failed to generate recap with Ollama: ${error.message}`);
-    }
-  }
-
   _onDragStart(event) {
-    event.currentTarget.classList.add("dragging");
+    const card = event.target.closest(".npc-card, .player-card");
+    if (!card) return;
+
+    // Store the initial mouse position and card position
+    card.dataset.startX = event.clientX;
+    card.dataset.startY = event.clientY;
+    card.dataset.initialLeft = parseFloat(card.style.left) || 0;
+    card.dataset.initialTop = parseFloat(card.style.top) || 0;
+
+    card.classList.add("dragging");
   }
 
   _onDragOver(event) {
     event.preventDefault();
     const card = event.target.closest(".npc-card, .player-card");
-    if (!card) return;
+    if (!card || !card.classList.contains("dragging")) return;
 
     const container = card.closest(".character-container");
     if (!container) return;
 
-    const containerRect = container.getBoundingClientRect();
-    const x =
-      ((event.clientX - containerRect.left) / containerRect.width) * 100;
-    const y =
-      ((event.clientY - containerRect.top) / containerRect.height) * 100;
+    // Calculate the distance moved
+    const deltaX = event.clientX - parseFloat(card.dataset.startX);
+    const deltaY = event.clientY - parseFloat(card.dataset.startY);
 
-    card.style.left = x + "%";
-    card.style.top = y + "%";
+    // Get container dimensions
+    const containerRect = container.getBoundingClientRect();
+
+    // Calculate new position as percentage
+    const initialLeft = parseFloat(card.dataset.initialLeft);
+    const initialTop = parseFloat(card.dataset.initialTop);
+
+    const newX = initialLeft + (deltaX / containerRect.width) * 100;
+    const newY = initialTop + (deltaY / containerRect.height) * 100;
+
+    // Ensure position stays within bounds
+    const boundedX = Math.max(0, Math.min(100, newX));
+    const boundedY = Math.max(0, Math.min(100, newY));
+
+    // Update card position
+    card.style.left = `${boundedX}%`;
+    card.style.top = `${boundedY}%`;
   }
 
   async _onDrop(event) {
     event.preventDefault();
     const card = event.target.closest(".npc-card, .player-card");
-    if (!card) return;
+    if (!card || !card.classList.contains("dragging")) return;
 
     card.classList.remove("dragging");
-    const container = card.closest(".character-container");
-    if (!container) return;
 
-    const containerRect = container.getBoundingClientRect();
-    const cardRect = card.getBoundingClientRect();
+    // Get the final position
+    const x = parseFloat(card.style.left);
+    const y = parseFloat(card.style.top);
 
-    const x =
-      ((cardRect.left - containerRect.left) / containerRect.width) * 100;
-    const y = ((cardRect.top - containerRect.top) / containerRect.height) * 100;
-
+    // Update actor position
     const actorId = card.dataset.actorId;
     const actor = game.actors.get(actorId);
-    await actor.setFlag("foundry-landing", "position", { x, y });
+    if (actor) {
+      await actor.setFlag("foundry-landing", "position", { x, y });
+    }
   }
 
   async _onTestConnection(event) {
@@ -417,12 +325,6 @@ Remember to maintain the specified style throughout the recap and make it engagi
         case "openai":
           success = await this._testOpenAI();
           break;
-        case "huggingface":
-          success = await this._testHuggingFace();
-          break;
-        case "ollama":
-          success = await this._testOllama();
-          break;
         default:
           throw new Error(`Unknown provider: ${provider}`);
       }
@@ -431,7 +333,7 @@ Remember to maintain the specified style throughout the recap and make it engagi
         button.classList.remove("loading", "error");
         button.classList.add("success");
         button.querySelector("i").classList.replace("fa-spinner", "fa-check");
-        ui.notifications.success(`Successfully connected to ${provider}!`);
+        ui.notifications.info(`Successfully connected to ${provider}!`);
       }
     } catch (error) {
       console.error("Connection Test Error:", error);
@@ -470,51 +372,6 @@ Remember to maintain the specified style throughout the recap and make it engagi
     }
 
     return true;
-  }
-
-  async _testHuggingFace() {
-    const apiKey = game.settings.get("foundry-landing", "hfApiKey");
-    if (!apiKey) {
-      throw new Error("Hugging Face API key not configured");
-    }
-
-    const model = game.settings.get("foundry-landing", "hfModel");
-    const response = await fetch(
-      `https://api-inference.huggingface.co/models/${model}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          inputs: "Test connection",
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || "Failed to connect to Hugging Face");
-    }
-
-    return true;
-  }
-
-  async _testOllama() {
-    const endpoint = game.settings.get("foundry-landing", "ollamaEndpoint");
-
-    try {
-      const healthCheck = await fetch(`${endpoint}/api/health`);
-      if (!healthCheck.ok) {
-        throw new Error("Ollama server is not responding");
-      }
-      return true;
-    } catch (error) {
-      throw new Error(
-        "Cannot connect to Ollama. Please make sure it's running."
-      );
-    }
   }
 
   async close(options = {}) {

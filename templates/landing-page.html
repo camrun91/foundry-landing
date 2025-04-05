@@ -1,79 +1,79 @@
-<div class="landing-page-container" {{#if backgroundImage}}style="background-image: url('{{backgroundImage}}')"{{/if}}>
-    <div class="landing-page-content">
-        {{#if showNpcHistory}}
-        <div class="character-container">
-            {{#each npcs}}
-            {{#if (or ../isGM isVisible)}}
-            <div class="npc-card" data-actor-id="{{this.id}}">
-                {{#if ../isGM}}
-                <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
-                {{/if}}
-                <img src="{{this.img}}" alt="{{this.name}}">
-                <h3>{{this.name}}</h3>
-                <div class="npc-metadata">
-                    {{this.description}}
-                </div>
-            </div>
-            {{/if}}
-            {{/each}}
-        </div>
+<div class="landing-page-container" {{#if backgroundImage}}style="background-image: url('{{backgroundImage}}')" {{/if}}>
+  <div class="landing-page-content">
+    {{#if showNpcHistory}}
+    <div class="character-container">
+      {{#each npcs}}
+      {{#if (or ../isGM isVisible)}}
+      <div class="npc-card" data-actor-id="{{this.id}}">
+        {{#if ../isGM}}
+        <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
         {{/if}}
-
-        {{#if showPlayerInfo}}
-        <div class="character-container">
-            {{#each players}}
-            <div class="player-card" data-actor-id="{{this.id}}">
-                {{#if ../isGM}}
-                <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
-                {{/if}}
-                <img src="{{this.img}}" alt="{{this.name}}">
-                <h3>{{this.name}}</h3>
-                <div class="player-metadata">
-                    {{this.description}}
-                </div>
-            </div>
-            {{/each}}
+        <img src="{{this.img}}" alt="{{this.name}}">
+        <!-- <h3>{{this.name}}</h3> -->
+        <div class="npc-metadata">
+          {{this.description}}
         </div>
-        {{/if}}
+      </div>
+      {{/if}}
+      {{/each}}
     </div>
+    {{/if}}
 
-    <div class="recap-section">
-        <h2>Last Session Recap</h2>
-        {{#if recap}}
-        <div class="recap-content">
-            {{{recap}}}
-        </div>
+    {{#if showPlayerInfo}}
+    <div class="character-container">
+      {{#each players}}
+      <div class="player-card" data-actor-id="{{this.id}}">
+        {{#if ../isGM}}
+        <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
         {{/if}}
-        
-        {{#if isGM}}
-        <div class="recap-controls">
-            <div class="recap-input-group">
-                <label>Session Notes:</label>
-                <textarea name="recap-text" placeholder="Enter session notes here..."></textarea>
-                <div class="file-input-group">
-                    <label>Or upload a file:</label>
-                    <input type="file" name="recap-file" accept=".txt,.md">
-                </div>
-            </div>
-            <div class="recap-style-group">
-                <label>Recap Style:</label>
-                <select name="recap-style">
-                    <option value="dragonball">Dragon Ball Z Style</option>
-                    <option value="noir">Film Noir Style</option>
-                    <option value="bard">Bard's Tale Style</option>
-                    <option value="news">Fantasy News Style</option>
-                    <option value="letter">Personal Letter Style</option>
-                </select>
-            </div>
-            <div class="button-group">
-                <button type="button" class="generate-recap">
-                    <i class="fas fa-magic"></i> Generate Recap
-                </button>
-                <button type="button" class="test-connection">
-                    <i class="fas fa-plug"></i> Test Connection
-                </button>
-            </div>
+        <img src="{{this.img}}" alt="{{this.name}}">
+        <h3>{{this.name}}</h3>
+        <div class="player-metadata">
+          {{this.description}}
         </div>
-        {{/if}}
+      </div>
+      {{/each}}
     </div>
-</div> 
+    {{/if}}
+  </div>
+
+  <div class="recap-section">
+    <h2>Last Session Recap</h2>
+    {{#if recap}}
+    <div class="recap-content">
+      {{{recap}}}
+    </div>
+    {{/if}}
+
+    {{#if isGM}}
+    <div class="recap-controls">
+      <div class="recap-input-group">
+        <label>Session Notes:</label>
+        <textarea name="recap-text" placeholder="Enter session notes here..."></textarea>
+        <div class="file-input-group">
+          <label>Or upload a file:</label>
+          <input type="file" name="recap-file" accept=".txt,.md">
+        </div>
+      </div>
+      <div class="recap-style-group">
+        <label>Recap Style:</label>
+        <select name="recap-style">
+          <option value="dragonball">Dragon Ball Z Style</option>
+          <option value="noir">Film Noir Style</option>
+          <option value="bard">Bard's Tale Style</option>
+          <option value="news">Fantasy News Style</option>
+          <option value="letter">Personal Letter Style</option>
+        </select>
+      </div>
+      <div class="button-group">
+        <button type="button" class="generate-recap">
+          <i class="fas fa-magic"></i> Generate Recap
+        </button>
+        <button type="button" class="test-connection">
+          <i class="fas fa-plug"></i> Test Connection
+        </button>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>

@@ -55,10 +55,8 @@ export function registerSettings() {
     type: String,
     choices: {
       openai: "OpenAI (GPT-3.5/4)",
-      huggingface: "Hugging Face (Free)",
-      ollama: "Ollama (Local)",
     },
-    default: "huggingface",
+    default: "openai",
   });
 
   // OpenAI Settings
@@ -112,11 +110,11 @@ export function registerSettings() {
   // Ollama Settings
   game.settings.register("foundry-landing", "ollamaEndpoint", {
     name: "Ollama Endpoint",
-    hint: "Your Ollama endpoint (usually http://localhost:11434)",
+    hint: "Your Ollama endpoint (should use HTTPS if Foundry is using HTTPS)",
     scope: "world",
     config: true,
     type: String,
-    default: "http://localhost:11434",
+    default: "https://192.168.1.242:30068",
   });
 
   game.settings.register("foundry-landing", "ollamaModel", {
