@@ -16,7 +16,7 @@
   "esmodules": ["module/init.js"],
   "styles": ["styles/landing.css"],
   "url": "https://github.com/camrun91/foundry-landing",
-  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json",
+  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/refs/heads/main/module.json",
   "download": "https://github.com/camrun91/foundry-landing/archive/main.zip",
   "readme": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/README.md",
   "changelog": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/CHANGELOG.md",
