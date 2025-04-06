@@ -328,18 +328,42 @@ Hooks.on("init", () => {
 
 // Helper functions for managing login state
 const LOGIN_STATE_KEY = "foundry_landing_logged_in";
+const EXPIRY_HOURS = 16;
 
 function isFirstLogin() {
-  return !localStorage.getItem(LOGIN_STATE_KEY);
+  const loginData = sessionStorage.getItem(LOGIN_STATE_KEY);
+  if (!loginData) return true;
+
+  try {
+    const { timestamp } = JSON.parse(loginData);
+    const now = Date.now();
+    const expiryTime = EXPIRY_HOURS * 60 * 60 * 1000; // Convert hours to milliseconds
+
+    // Check if more than 16 hours have passed
+    if (now - timestamp > expiryTime) {
+      clearLoginState(); // Clear expired state
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Foundry Landing Page | Error parsing login state:", error);
+    clearLoginState(); // Clear invalid state
+    return true;
+  }
 }
 
 function setLoggedIn() {
-  localStorage.setItem(LOGIN_STATE_KEY, "true");
+  const loginData = {
+    timestamp: Date.now(),
+    loggedIn: true,
+  };
+  sessionStorage.setItem(LOGIN_STATE_KEY, JSON.stringify(loginData));
 }
 
 function clearLoginState() {
   console.log("Foundry Landing Page | Clearing login state");
-  localStorage.removeItem(LOGIN_STATE_KEY);
+  sessionStorage.removeItem(LOGIN_STATE_KEY);
 }
 
 /**
@@ -677,7 +701,6 @@ Hooks.once("ready", async () => {
       // Set the login flag for this user
       setLoggedIn();
 
-      // Only GM can activate scenes
       if (game.user.isGM) {
         try {
           // Deactivate any currently active scenes
@@ -694,24 +717,17 @@ Hooks.once("ready", async () => {
             error
           );
         }
+      } else {
+        // For non-GM users, just view the landing page scene
+        try {
+          console.log(
+            "Foundry Landing Page | Non-GM user viewing landing page"
+          );
+          await landingPageScene.view();
+        } catch (error) {
+          console.error("Foundry Landing Page | Error viewing scene:", error);
+        }
       }
-    }
-  }
-});
-
-// Reset the login flag when the logout dialog appears
-Hooks.on("renderApplication", (app, html, data) => {
-  if (app.options.id === "logOut") {
-    try {
-      console.log(
-        "Foundry Landing Page | Detected logout dialog, resetting login flag"
-      );
-      clearLoginState();
-    } catch (error) {
-      console.error(
-        "Foundry Landing Page | Error resetting login flag:",
-        error
-      );
     }
   }
 });
@@ -744,11 +760,4 @@ Hooks.on("getSceneDirectoryEntryContext", (html, contextOptions) => {
       }
     },
   });
-});
-
-Hooks.on("canvasTearDown", (canvas) => {
-  // Your code to execute on logout
-  console.log("Canvas is tearing down, user likely logged out.");
-  // Example: Save some data
-  // game.settings.set("your-module", "someSetting", "someValue");
 });
