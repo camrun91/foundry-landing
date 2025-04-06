@@ -2,7 +2,7 @@
   "name": "foundry-landing",
   "title": "Foundry Landing Page",
   "description": "A landing page for Foundry VTT",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "compatibility": {
     "minimum": "10",
     "verified": "12"
