@@ -1,0 +1,96 @@
+// Scene templates
+export const PREDEFINED_SCENES = {
+  fantasy_dungeon: {
+    name: "Fantasy Dungeon",
+    data: {
+      background: {
+        src: "modules/foundry-landing/assets/images/A_fantasy_adventure-themed_background_image_design_taller.png",
+        tint: "#ffffff",
+        anchorX: 0,
+        anchorY: 0,
+        offsetX: 0,
+        offsetY: 0,
+        fit: "fill",
+        scaleX: 1,
+        scaleY: 1,
+        rotation: 0,
+        alphaThreshold: 0,
+      },
+      thumb:
+        "modules/foundry-landing/assets/images/A_fantasy_adventure-themed_background_image_design_taller.png",
+      environment: {
+        globalLight: {
+          enabled: true,
+          darkness: {
+            max: 1,
+            min: 0,
+          },
+          alpha: 0.5,
+          bright: false,
+          color: null,
+          coloration: 1,
+          luminosity: 0,
+          saturation: 0,
+          contrast: 0,
+          shadows: 0,
+        },
+        darknessLevel: 0.65,
+        darknessLock: false,
+        cycle: true,
+        base: {
+          hue: 0,
+          intensity: 0,
+          luminosity: 0,
+          saturation: 0,
+          shadows: 0,
+        },
+        dark: {
+          hue: 0.7138888888888889,
+          intensity: 0,
+          luminosity: -0.25,
+          saturation: 0,
+          shadows: 0,
+        },
+      },
+      lights: [
+        {
+          _id: "CuNvyxWmFTiiMjt9",
+          x: 1062,
+          y: 201,
+          elevation: 0,
+          rotation: 0,
+          walls: true,
+          vision: false,
+          config: {
+            negative: false,
+            priority: 0,
+            alpha: 0.45,
+            angle: 360,
+            bright: 12.39,
+            color: null,
+            coloration: 1,
+            dim: 24.77,
+            attenuation: 0.5,
+            luminosity: 0.5,
+            saturation: 0,
+            contrast: 0,
+            shadows: 0,
+            animation: {
+              type: "torch",
+              speed: 2,
+              intensity: 3,
+              reverse: false,
+            },
+            darkness: {
+              min: 0,
+              max: 1,
+            },
+          },
+          hidden: false,
+          flags: {},
+        },
+      ],
+    },
+  },
+  // Add more predefined scenes here in the future
+};
