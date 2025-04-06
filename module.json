@@ -14,7 +14,7 @@
       "url": "https://your-website.com"
     }
   ],
-  "esmodules": ["module/init.js", "module/scenes/landing-scene.js"],
+  "esmodules": ["module/init.js"],
   "styles": ["styles/landing.css"],
   "packs": [],
   "relationships": {

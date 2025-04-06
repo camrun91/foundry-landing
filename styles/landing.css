@@ -126,29 +126,8 @@
 }
 
 /* Scene-specific styles */
-.scene-content {
+.scene[data-scene-id] .landing-page-content {
   position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.scene-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-}
-
-/* Landing page content */
-.landing-page-content {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -157,16 +136,57 @@
   padding: 1em;
   overflow: auto;
   z-index: 10;
+  pointer-events: auto;
 }
 
-.character-container {
+/* Background image handling */
+.scene[data-scene-id].landing-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.scene[data-scene-id].landing-page img.background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Add a subtle vignette effect to help with visibility */
+.scene[data-scene-id].landing-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle,
+    transparent 40%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Landing page containers */
+.scene[data-scene-id] .landing-page-content .character-container {
   background: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
   padding: 1em;
   position: relative;
 }
 
-.character-container h2 {
+.scene[data-scene-id] .landing-page-content .character-container h2 {
   margin: 0 0 1em 0;
   color: #fff;
   text-align: center;
@@ -174,7 +194,7 @@
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-.character-grid {
+.scene[data-scene-id] .landing-page-content .character-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1em;
@@ -182,8 +202,9 @@
   min-height: 200px;
 }
 
-.npc-card,
-.player-card {
+/* Character cards */
+.scene[data-scene-id] .landing-page-content .npc-card,
+.scene[data-scene-id] .landing-page-content .player-card {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   padding: 0.5em;
@@ -196,15 +217,15 @@
   border: 1px solid transparent;
 }
 
-.npc-card:hover,
-.player-card:hover {
+.scene[data-scene-id] .landing-page-content .npc-card:hover,
+.scene[data-scene-id] .landing-page-content .player-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.npc-card img,
-.player-card img {
+.scene[data-scene-id] .landing-page-content .npc-card img,
+.scene[data-scene-id] .landing-page-content .player-card img {
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -212,8 +233,8 @@
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.npc-card .name,
-.player-card .name {
+.scene[data-scene-id] .landing-page-content .npc-card .name,
+.scene[data-scene-id] .landing-page-content .player-card .name {
   margin-top: 0.5em;
   color: #fff;
   text-align: center;
@@ -221,7 +242,8 @@
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.drag-handle {
+/* Drag handle */
+.scene[data-scene-id] .landing-page-content .drag-handle {
   position: absolute;
   top: 0.5em;
   right: 0.5em;
@@ -229,8 +251,9 @@
   cursor: move;
 }
 
-.npc-card.dragging,
-.player-card.dragging {
+/* Dragging states */
+.scene[data-scene-id] .landing-page-content .npc-card.dragging,
+.scene[data-scene-id] .landing-page-content .player-card.dragging {
   opacity: 0.8;
   transform: scale(1.05);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
@@ -238,113 +261,63 @@
 }
 
 /* Visibility controls */
-.visibility-controls {
-  display: flex;
-  gap: 1em;
+.scene[data-scene-id] .landing-page-content .visibility-controls {
   margin-bottom: 1em;
-  padding: 0.5em;
+  padding: 1em;
   background: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
-  z-index: 20;
 }
 
-.header-controls {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 1em;
-  padding: 0.5em;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 8px 8px 0 0;
-  z-index: 20;
-}
-
-.visibility-dropdown {
+.scene[data-scene-id] .landing-page-content .visibility-dropdown {
   position: relative;
-  display: inline-block;
+  margin-bottom: 0.5em;
 }
 
-.visibility-toggle {
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+.scene[data-scene-id] .landing-page-content .visibility-toggle {
+  width: 100%;
+  padding: 0.5em;
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-  padding: 0.5em 1em;
+  color: #fff;
   cursor: pointer;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5em;
-  transition: all 0.2s ease;
 }
 
-.visibility-toggle:hover {
-  background: rgba(0, 0, 0, 0.7);
-}
-
-.visibility-toggle i {
-  font-size: 0.9em;
-}
-
-.visibility-toggle i.fa-chevron-down {
-  margin-left: 0.5em;
-  transition: transform 0.2s ease;
-}
-
-.visibility-dropdown.active .visibility-toggle i.fa-chevron-down {
-  transform: rotate(180deg);
-}
-
-.visibility-content {
+.scene[data-scene-id] .landing-page-content .visibility-content {
+  display: none;
   position: absolute;
   top: 100%;
   left: 0;
-  width: 200px;
+  width: 100%;
   background: rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   padding: 0.5em;
   margin-top: 0.5em;
-  display: none;
-  z-index: 100;
-  max-height: 300px;
-  overflow-y: auto;
+  z-index: 1000;
 }
 
-.visibility-dropdown.active .visibility-content {
+.scene[data-scene-id] .landing-page-content .visibility-dropdown.active .visibility-content {
   display: block;
 }
 
-.visibility-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
+.scene[data-scene-id] .landing-page-content .visibility-item {
+  padding: 0.25em 0;
+  color: #fff;
 }
 
-.visibility-item {
-  padding: 0.5em;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.visibility-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.visibility-item label {
+.scene[data-scene-id] .landing-page-content .visibility-item label {
   display: flex;
   align-items: center;
   gap: 0.5em;
   cursor: pointer;
-  color: #fff;
-  font-size: 0.9em;
 }
 
-.visibility-item input[type="checkbox"] {
+.scene[data-scene-id] .landing-page-content .visibility-item input[type="checkbox"] {
   margin: 0;
-  cursor: pointer;
 }
 
 /* Add styles for the actor sheet visibility toggle */
