@@ -13,5 +13,7 @@
     "verified": "11"
   },
   "esmodules": ["module/init.js"],
-  "styles": ["styles/landing.css"]
+  "styles": ["styles/landing.css"],
+  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json",
+  "download": "https://github.com/camrun91/foundry-landing/archive/refs/heads/main.zip"
 }
