@@ -1,22 +1,41 @@
 {
-  "id": "foundry-landing",
+  "name": "foundry-landing",
   "title": "Foundry Landing Page",
-  "description": "A module for creating landing scenes automatically",
+  "description": "A customizable landing page module for Foundry VTT with NPC history and player information",
   "version": "0.0.34",
+  "minimumCoreVersion": "11.0.0",
+  "compatibleCoreVersion": "12.0.0",
   "compatibility": {
-    "minimum": "10",
-    "verified": "12"
+    "minimum": "12.0.0",
+    "verified": "12.0.0",
+    "maximum": "12"
   },
   "authors": [
     {
-      "name": "Cameron Llewellyn",
+      "name": "camrun91",
       "url": "https://github.com/camrun91"
     }
   ],
-  "esmodules": ["module/init.js"],
+  "esmodules": ["module/main.js"],
   "styles": ["styles/landing.css"],
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json"
+      }
+    ]
+  },
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
   "url": "https://github.com/camrun91/foundry-landing",
-  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/refs/heads/main/module.json",
+  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json",
   "download": "https://github.com/camrun91/foundry-landing/archive/main.zip",
   "readme": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/README.md",
   "changelog": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/CHANGELOG.md",
