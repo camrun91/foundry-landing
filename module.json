@@ -15,7 +15,6 @@
   ],
   "esmodules": ["module/init.js"],
   "styles": ["styles/landing.css"],
-  "packs": [],
   "url": "https://github.com/camrun91/foundry-landing",
   "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json",
   "download": "https://github.com/camrun91/foundry-landing/archive/main.zip",
