@@ -1,8 +1,8 @@
 {
-  "name": "foundry-landing",
+  "id": "foundry-landing",
   "title": "Foundry Landing Page",
-  "description": "A landing page for Foundry VTT",
-  "version": "0.0.33",
+  "description": "A module for creating landing scenes automatically",
+  "version": "0.0.34",
   "compatibility": {
     "minimum": "10",
     "verified": "12"
