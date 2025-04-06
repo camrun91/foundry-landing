@@ -17,10 +17,5 @@
   "styles": ["styles/landing.css"],
   "packs": [],
   "url": "https://github.com/camrun91/foundry-landing",
-  "manifest": "https://github.com/camrun91/foundry-landing/releases/latest/download/module.json",
-  "download": "https://github.com/camrun91/foundry-landing/releases/latest/download/module.zip",
-  "license": "LICENSE",
-  "readme": "README.md",
-  "bugs": "https://github.com/camrun91/foundry-landing/issues",
-  "changelog": "https://github.com/camrun91/foundry-landing/releases"
+  "manifest": "https://raw.githubusercontent.com/camrun91/foundry-landing/main/module.json"
 }
